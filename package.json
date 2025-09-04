@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --coverage --reporters=default --reporters=jest-junit",
+    "test:watch": "jest --watchAll"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +18,18 @@
     "pg": "^8.16.3"
   },
   "devDependencies": {
+    "jest": "^30.1.3",
+    "jest-junit": "^16.0.0",
     "nodemon": "^3.1.10"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": ["src/**/*.js"],
+    "testResultsProcessor": "jest-junit"
+  },
+  "jest-junit": {
+    "outputDirectory": "test-reports",
+    "outputName": "junit.xml"
   }
 }
