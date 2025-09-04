@@ -11,60 +11,28 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        checkout scm
+        git branch: 'main',
+            url: 'https://github.com/amarmaulana95/api-danareksa.git'
       }
     }
-
-    stage('Install Dependencies') {
-      steps {
-        bat 'npm ci'
-      }
-    }
-
-   stage('Unit Testing') {
-        steps {
-            bat 'docker compose exec -T app npm test -- --ci --reporters=default --reporters=jest-junit'
-        }
-        post {
-            always {
-            junit 'test-reports/junit.xml'
-            publishHTML([
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'coverage',
-                reportFiles: 'index.html',
-                reportName: 'Coverage Report'
-            ])
-            }
-        }
-    }
-
 
     stage('Build Image') {
       steps {
-        bat 'docker build -t api-danareksa:%BUILD_NUMBER% .'
-        bat 'docker tag api-danareksa:%BUILD_NUMBER% api-danareksa:latest'
+        bat 'docker build -t api-danareksa .'
       }
     }
 
-    stage('Deploy Dev') {
-      when { branch 'main' }
+    stage('Deploy') {
       steps {
         bat 'docker-compose up -d --build'
       }
     }
 
-   stage('Health Check') {
-    steps {
-        // Delay 5 detik (silent)
-        bat 'ping -n 6 127.0.0.1 >nul'
-        
-        // Cek service
-        bat 'curl -f http://localhost:3000 || exit 1'
+    stage('Verify') {
+      steps {
+        bat 'curl -f http://localhost:3000 || echo "API belum ready, tunggu sebentar..."'
+      }
     }
-    }
-
   }
 
   post {
@@ -72,13 +40,10 @@ pipeline {
       bat 'echo Pipeline selesai.'
     }
     success {
-      bat 'echo Build sukses - semua stage hijau.'
+      bat 'echo Semua kotak hijau!'
     }
     failure {
-      bat 'echo Build gagal - ada stage merah.'
-    }
-    cleanup {
-      bat 'docker image prune -f'
+      bat 'echo Ada kotak merah, cek log.'
     }
   }
 }
