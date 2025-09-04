@@ -22,23 +22,24 @@ pipeline {
     }
 
    stage('Unit Testing') {
-        steps {
-            bat 'docker compose exec -T app npm test -- --ci --reporters=default --reporters=jest-junit'
-        }
-        post {
-            always {
-            junit 'test-reports/junit.xml'
-            publishHTML([
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'coverage',
-                reportFiles: 'index.html',
-                reportName: 'Coverage Report'
-            ])
-            }
+    steps {
+        bat 'docker compose exec -T app npm test -- --ci --forceExit --reporters=default --reporters=jest-junit'
+    }
+    post {
+        always {
+        junit 'test-reports/junit.xml'
+        publishHTML([
+            allowMissing: false,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: 'coverage',
+            reportFiles: 'index.html',
+            reportName: 'Coverage Report'
+        ])
         }
     }
+    }
+
 
 
     stage('Build Image') {
@@ -48,6 +49,7 @@ pipeline {
       }
     }
 
+  
    stage('Deploy') {
     when { 
         anyOf {
