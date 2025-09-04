@@ -5,88 +5,65 @@ pipeline {
     timeout(time: 20, unit: 'MINUTES')
     timestamps()
   }
-  
   triggers { githubPush() }
 
   stages {
     stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Build & Start Services') {
       steps {
-        checkout scm
+        bat 'docker compose down --remove-orphans || exit 0'
+        bat 'docker compose build --no-cache'
+        bat 'docker compose up -d db'
+        bat 'docker compose exec -T db pg_isready -U postgres'
+        bat 'docker compose up -d app'
       }
     }
 
-    stage('Install Dependencies') {
+    stage('Unit Testing') {
       steps {
-        bat 'npm ci'
-      }
-    }
-
-   stage('Unit Testing') {
-    steps {
         bat 'docker compose exec -T app npm test -- --ci --forceExit --reporters=default --reporters=jest-junit'
-    }
-    post {
+      }
+      post {
         always {
-        junit 'test-reports/junit.xml'
-        publishHTML([
+          junit 'test-reports/junit.xml'
+          publishHTML([
             allowMissing: false,
             alwaysLinkToLastBuild: true,
             keepAll: true,
             reportDir: 'coverage',
             reportFiles: 'index.html',
             reportName: 'Coverage Report'
-        ])
+          ])
         }
-    }
-    }
-
-
-
-    stage('Build Image') {
-      steps {
-        bat 'docker build -t api-danareksa:%BUILD_NUMBER% .'
-        bat 'docker tag api-danareksa:%BUILD_NUMBER% api-danareksa:latest'
       }
     }
 
-  
-   stage('Deploy') {
-    when { 
+    stage('Deploy') {
+      when {
         anyOf {
-        expression { env.BRANCH_NAME == 'main' }
-        expression { env.GIT_BRANCH == 'origin/main' }
+          expression { env.BRANCH_NAME == 'main' }
+          expression { env.GIT_BRANCH == 'origin/main' }
         }
-    }
-    steps {
-        bat 'docker-compose up -d --build'
-    }
-    }
-
-
-   stage('Health Check') {
-    steps {
-        // Delay 5 detik (silent)
-        bat 'ping -n 6 127.0.0.1 >nul'
-        
-        // Cek service
-        bat 'curl -f http://localhost:3000 || exit 1'
-    }
+      }
+      steps {
+        bat 'docker compose up -d --build'
+      }
     }
 
+    stage('Health Check') {
+      steps {
+        bat 'docker compose exec -T app curl -f http://localhost:3000 || exit 1'
+      }
+    }
   }
 
   post {
-    always {
-      bat 'echo Pipeline selesai.'
-    }
-    success {
-      bat 'echo Build sukses - semua stage hijau.'
-    }
-    failure {
-      bat 'echo Build gagal - ada stage merah.'
-    }
-    cleanup {
-      bat 'docker image prune -f'
-    }
+    always  { bat 'echo Pipeline selesai.' }
+    success { bat 'echo Build sukses - semua stage hijau.' }
+    failure { bat 'echo Build gagal - ada stage merah.' }
+    cleanup { bat 'docker image prune -f' }
   }
 }
