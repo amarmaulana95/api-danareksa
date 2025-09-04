@@ -1,15 +1,36 @@
 pipeline {
   agent any
   triggers { githubPush() }
+
   stages {
     stage('Checkout') {
-      steps { git 'https://github.com/amarmaulana95/api-danareksa.git' }
+      steps {
+        git 'https://github.com/amarmaulana95/api-danareksa.git'
+      }
     }
+
     stage('Build') {
-      steps { sh 'docker build -t api-danareksa .' }
+      steps {
+        script {
+          if (isUnix()) {
+            sh 'docker build -t api-danareksa .'
+          } else {
+            bat 'docker build -t api-danareksa .'
+          }
+        }
+      }
     }
+
     stage('Up') {
-      steps { sh 'docker-compose up -d --build' }
+      steps {
+        script {
+          if (isUnix()) {
+            sh 'docker-compose up -d --build'
+          } else {
+            bat 'docker-compose up -d --build'
+          }
+        }
+      }
     }
   }
 }
