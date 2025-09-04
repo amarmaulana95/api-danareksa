@@ -23,11 +23,7 @@ pipeline {
 
    stage('Unit Testing') {
     steps {
-        // tunggu postgres siap
-        bat 'docker compose exec -T app sh -c "until pg_isready -h db -U postgres; do sleep 1; done"'
-        
-        // baru jalanin test
-        bat 'docker compose exec -T app npm test -- --ci --forceExit --detectOpenHandles --reporters=default --reporters=jest-junit'
+        bat 'docker compose exec -T app npm test -- --ci --forceExit --reporters=default --reporters=jest-junit'
     }
     post {
         always {
@@ -43,7 +39,6 @@ pipeline {
         }
     }
     }
-
 
 
 
