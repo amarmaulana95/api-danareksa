@@ -66,7 +66,7 @@ pipeline {
       }
     }
 
-    stage('Health Check') {
+    stage('Smoke Test') {
       steps {
         bat 'docker compose exec -T app curl -f http://localhost:3000 || exit 1'
       }
