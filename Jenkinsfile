@@ -12,26 +12,25 @@ pipeline {
   }
 
   stages {
-    stage('Git Checkout') {
+    stage('Checkout Code') {
       steps { checkout scm }
     }
 
-    stage('Build Image') {          // <-- BARU: build image dulu
+    stage('Build and Test Image') {
       steps {
         bat 'docker build -t api-danareksa:latest .'
       }
     }
 
-    stage('Build & Start Services') {
+    stage('Start Services') {
       steps {
         bat 'docker compose down --remove-orphans || exit 0'
-        // pakai image yang baru dibuild
         bat 'docker compose up -d'
         bat 'docker compose exec -T db pg_isready -U postgres'
       }
     }
 
-    stage('Unit Testing') {
+    stage('Unit Test') {
       steps {
         bat 'if exist coverage rmdir /s /q coverage'
         bat 'docker compose exec -T app npm test -- --ci --forceExit --reporters=default --reporters=jest-junit'
@@ -43,7 +42,7 @@ pipeline {
       }
     }
 
-    stage('Docker Tag') {
+    stage('Tag and Version') {
       steps {
         script {
           def IMAGE = "api-danareksa"
@@ -55,7 +54,7 @@ pipeline {
       }
     }
 
-    stage('Deploy') {
+    stage('Deploy to Staging') {
       when {
         anyOf {
           expression { env.BRANCH_NAME == 'main' }
@@ -67,7 +66,7 @@ pipeline {
       }
     }
 
-    stage('Service validation') {
+    stage('Health Check') {
       steps {
         bat 'docker compose exec -T app curl -f http://localhost:3000 || exit 1'
       }
