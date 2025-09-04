@@ -23,7 +23,7 @@ pipeline {
 
     stage('Unit Testing') {
       steps {
-        bat 'docker compose exec -T app npm test'
+        bat 'docker compose exec -T app npm test -- --ci --reporters=default --reporters=jest-junit'
       }
       post {
         always {
