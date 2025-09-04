@@ -15,7 +15,7 @@ pipeline {
     stage('Build & Start Services') {
       steps {
         bat 'docker compose down --remove-orphans || exit 0'
-        bat 'docker compose build --no-cache'
+        bat 'docker compose build --no-cache && docker compose up -d'
         bat 'docker compose up -d db'
         bat 'docker compose exec -T db pg_isready -U postgres'
         bat 'docker compose up -d app'
