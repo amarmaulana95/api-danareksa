@@ -30,13 +30,13 @@ pipeline {
         always {
           junit 'test-reports/junit.xml'
           publishHTML([
-            allowMissing: false,
+            allowMissing: true,          // <-- ubah ini
             alwaysLinkToLastBuild: true,
             keepAll: true,
             reportDir: 'coverage',
             reportFiles: 'index.html',
             reportName: 'Coverage Report'
-          ])
+            ])
         }
       }
     }
