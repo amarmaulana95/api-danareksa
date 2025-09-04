@@ -1,7 +1,7 @@
 FROM node:18-alpine
 
-# Install PostgreSQL client utilities (termasuk pg_isready)
-RUN apk add --no-cache postgresql-client
+# Install postgresql-client + curl
+RUN apk add --no-cache postgresql-client curl
 
 WORKDIR /app
 COPY package*.json ./
