@@ -1,10 +1,6 @@
 properties([
-  pipelineTriggers([
-    githubPush()
-  ]),
-  buildDiscarder(
-    logRotator(daysToKeepStr: '7', numToKeepStr: '5')
-  )
+  pipelineTriggers([githubPush()]),
+  buildDiscarder(logRotator(daysToKeepStr: '7', numToKeepStr: '5'))
 ])
 
 pipeline {
@@ -14,45 +10,49 @@ pipeline {
     timeout(time: 20, unit: 'MINUTES')
     timestamps()
   }
-  triggers { githubPush() }
 
   stages {
     stage('Git Checkout') {
       steps { checkout scm }
     }
 
-    stage('Build & Start Services') {
+    stage('Build Image') {          // <-- BARU: build image dulu
       steps {
-        bat 'docker compose down --remove-orphans || exit 0'
-        bat 'docker compose build --no-cache && docker compose up -d'
-        bat 'docker compose up -d db'
-        bat 'docker compose exec -T db pg_isready -U postgres'
-        bat 'docker compose up -d app'
+        bat 'docker build -t api-danareksa:latest .'
       }
     }
 
-   stage('Unit Testing') {
-    steps {
+    stage('Build & Start Services') {
+      steps {
+        bat 'docker compose down --remove-orphans || exit 0'
+        // pakai image yang baru dibuild
+        bat 'docker compose up -d'
+        bat 'docker compose exec -T db pg_isready -U postgres'
+      }
+    }
+
+    stage('Unit Testing') {
+      steps {
         bat 'if exist coverage rmdir /s /q coverage'
         bat 'docker compose exec -T app npm test -- --ci --forceExit --reporters=default --reporters=jest-junit'
-    }
-    post {
+      }
+      post {
         always {
-        junit 'test-reports/junit.xml'
+          junit 'test-reports/junit.xml'
         }
-    }
+      }
     }
 
     stage('Docker Tag') {
-    steps {
+      steps {
         script {
-        def IMAGE = "api-danareksa"
-        def VERSION = "${BUILD_NUMBER}"
-        bat "docker tag ${IMAGE}:latest ${IMAGE}:${VERSION}"
-        bat "docker tag ${IMAGE}:latest ${IMAGE}:prod-${VERSION}"
-        echo "Tagged: ${IMAGE}:${VERSION} & prod-${VERSION}"
+          def IMAGE = "api-danareksa"
+          def VERSION = "${BUILD_NUMBER}"
+          bat "docker tag ${IMAGE}:latest ${IMAGE}:${VERSION}"
+          bat "docker tag ${IMAGE}:latest ${IMAGE}:prod-${VERSION}"
+          echo "Tagged: ${IMAGE}:${VERSION} & prod-${VERSION}"
         }
-    }
+      }
     }
 
     stage('Deploy') {
