@@ -16,7 +16,7 @@ pipeline {
       steps { checkout scm }
     }
 
-    stage('Build and Test Image') {
+    stage('Build Test Image') {
       steps {
         bat 'docker build -t api-danareksa:latest .'
       }
@@ -42,7 +42,7 @@ pipeline {
       }
     }
 
-    stage('Tag and Version') {
+    stage('Docker Tag Version') {
       steps {
         script {
           def IMAGE = "api-danareksa"
