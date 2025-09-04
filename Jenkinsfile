@@ -43,7 +43,7 @@ pipeline {
     }
     }
 
-    stage('Docker Tag Docker') {
+    stage('Docker Tag') {
     steps {
         script {
         def IMAGE = "api-danareksa"
