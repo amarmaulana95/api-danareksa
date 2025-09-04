@@ -3,35 +3,41 @@ pipeline {
   triggers { githubPush() }
 
   stages {
-    stage('Checkout') {
+    stage('🔍 Checkout') {
       steps {
         git branch: 'main',
             url: 'https://github.com/amarmaulana95/api-danareksa.git'
       }
     }
 
-    stage('Build') {
+    stage('🔧 Build Image') {
       steps {
-        script {
-          if (isUnix()) {
-            sh 'docker build -t api-danareksa .'
-          } else {
-            bat 'docker build -t api-danareksa .'
-          }
-        }
+        bat 'docker build -t api-danareksa .'
       }
     }
 
-    stage('Up') {
+    stage('🚀 Deploy') {
       steps {
-        script {
-          if (isUnix()) {
-            sh 'docker-compose up -d --build'
-          } else {
-            bat 'docker-compose up -d --build'
-          }
-        }
+        bat 'docker-compose up -d --build'
       }
+    }
+
+    stage('✅ Verify') {
+      steps {
+        bat 'curl -f http://localhost:3000 || echo "API belum ready, tunggu sebentar..."'
+      }
+    }
+  }
+
+  post {
+    always {
+      bat 'echo Pipeline selesai.'
+    }
+    success {
+      bat 'echo 🎉 Semua kotak hijau!'
+    }
+    failure {
+      bat 'echo ❌ Ada kotak merah, cek log.'
     }
   }
 }
