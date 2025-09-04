@@ -1,11 +1,5 @@
 pipeline {
-  agent {
-    docker {
-        image 'docker:dind'   // atau langsung bind host Docker
-        args '-v /var/run/docker.sock:/var/run/docker.sock'
-    }
-  }
-  
+  agent any
   triggers { githubPush() }
 
   stages {
@@ -17,15 +11,27 @@ pipeline {
     }
 
     stage('Build') {
-        steps {
-            powershell 'docker build -t api-danareksa .'
+      steps {
+        script {
+          if (isUnix()) {
+            sh 'docker build -t api-danareksa .'
+          } else {
+            bat 'docker build -t api-danareksa .'
+          }
         }
+      }
     }
-    
+
     stage('Up') {
-        steps {
-            powershell 'docker-compose up -d --build'
+      steps {
+        script {
+          if (isUnix()) {
+            sh 'docker-compose up -d --build'
+          } else {
+            bat 'docker-compose up -d --build'
+          }
         }
+      }
     }
   }
 }
