@@ -8,7 +8,7 @@ pipeline {
   triggers { githubPush() }
 
   stages {
-    stage('Checkout') {
+    stage('Git Checkout') {
       steps { checkout scm }
     }
 
@@ -30,6 +30,18 @@ pipeline {
     post {
         always {
         junit 'test-reports/junit.xml'
+        }
+    }
+    }
+
+    stage('Docker Tag Docker') {
+    steps {
+        script {
+        def IMAGE = "api-danareksa"
+        def VERSION = "${BUILD_NUMBER}"
+        bat "docker tag ${IMAGE}:latest ${IMAGE}:${VERSION}"
+        bat "docker tag ${IMAGE}:latest ${IMAGE}:prod-${VERSION}"
+        echo "Tagged: ${IMAGE}:${VERSION} & prod-${VERSION}"
         }
     }
     }
