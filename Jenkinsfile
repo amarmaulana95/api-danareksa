@@ -5,7 +5,7 @@ pipeline {
     timeout(time: 20, unit: 'MINUTES')
     timestamps()
   }
-
+  
   triggers { githubPush() }
 
   stages {
@@ -15,20 +15,15 @@ pipeline {
       }
     }
 
-    stage('Build Images') {
+    stage('Install Dependencies') {
       steps {
-        bat 'docker compose build'
+        bat 'npm ci'
       }
     }
 
     stage('Unit Testing') {
       steps {
-        // start db dan app container
-        bat 'docker compose up -d db'
-        // tunggu db ready sebelum test
-        bat 'docker compose exec -T app sh -c "until pg_isready -h db -U postgres; do sleep 1; done"'
-        // jalanin test di container app
-        bat 'docker compose exec -T app npm run test'
+        bat 'docker compose exec -T app npm test'
       }
       post {
         always {
@@ -45,7 +40,7 @@ pipeline {
       }
     }
 
-    stage('Build Image for Deploy') {
+    stage('Build Image') {
       steps {
         bat 'docker build -t api-danareksa:%BUILD_NUMBER% .'
         bat 'docker tag api-danareksa:%BUILD_NUMBER% api-danareksa:latest'
@@ -55,7 +50,7 @@ pipeline {
     stage('Deploy Dev') {
       when { branch 'main' }
       steps {
-        bat 'docker compose up -d --build'
+        bat 'docker-compose up -d --build'
       }
     }
 
