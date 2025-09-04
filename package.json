@@ -27,7 +27,15 @@
     "coverageDirectory": "coverage",
     "collectCoverageFrom": ["src/**/*.js"],
     "testResultsProcessor": "jest-junit",
-    "setupFiles": ["dotenv/config"]
+    "setupFiles": ["dotenv/config"],
+    "coverageThreshold": {
+      "global": {
+        "branches": 0,
+        "functions": 0,
+        "lines": 0,
+        "statements": 0
+      }
+    }
   },
   "jest-junit": {
     "outputDirectory": "test-reports",
