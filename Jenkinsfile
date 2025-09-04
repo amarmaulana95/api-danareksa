@@ -55,12 +55,16 @@ pipeline {
       }
     }
 
-    stage('Health Check') {
-      steps {
-        bat 'timeout /t 5 /nobreak > nul'
+   stage('Health Check') {
+    steps {
+        // Delay 5 detik (silent)
+        bat 'ping -n 6 127.0.0.1 >nul'
+        
+        // Cek service
         bat 'curl -f http://localhost:3000 || exit 1'
-      }
     }
+    }
+
   }
 
   post {
