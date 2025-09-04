@@ -22,23 +22,24 @@ pipeline {
       }
     }
 
-    stage('Unit Testing') {
-      steps {
+   stage('Unit Testing') {
+    steps {
+        bat 'if exist coverage rmdir /s /q coverage'
         bat 'docker compose exec -T app npm test -- --ci --forceExit --reporters=default --reporters=jest-junit'
-      }
-      post {
+    }
+    post {
         always {
-          junit 'test-reports/junit.xml'
-          publishHTML([
-            allowMissing: true,          // <-- ubah ini
+        junit 'test-reports/junit.xml'
+        publishHTML([
+            allowMissing: true,
             alwaysLinkToLastBuild: true,
             keepAll: true,
             reportDir: 'coverage',
             reportFiles: 'index.html',
             reportName: 'Coverage Report'
-            ])
+        ])
         }
-      }
+    }
     }
 
     stage('Deploy') {
