@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="1" failures="1" errors="0" time="3.998">
+  <testsuite name="GET /users" errors="0" failures="1" skipped="0" timestamp="2025-09-04T07:31:44" time="3.037" tests="1">
+    <testcase classname="GET /users should return array of users" name="GET /users should return array of users" time="2.729">
+      <failure>Error: getaddrinfo ENOTFOUND db
+    at D:\CICD\api-danareksa\node_modules\pg-pool\index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.&lt;anonymous&gt; (D:\CICD\api-danareksa\src\users.test.js:5:22)</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

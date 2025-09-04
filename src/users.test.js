@@ -1,4 +1,4 @@
-const pool = require('./db');
+const pool = require('./db'); // import pool dari db.js
 
 describe('GET /users', () => {
   it('should return array of users', async () => {
@@ -6,4 +6,9 @@ describe('GET /users', () => {
     expect(rows).toBeInstanceOf(Array);
     expect(rows.length).toBeGreaterThan(0);
   });
+});
+
+// Tutup koneksi setelah semua test
+afterAll(async () => {
+  await pool.end();
 });
