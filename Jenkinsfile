@@ -1,3 +1,12 @@
+properties([
+  pipelineTriggers([
+    githubPush()
+  ]),
+  buildDiscarder(
+    logRotator(daysToKeepStr: '7', numToKeepStr: '5')
+  )
+])
+
 pipeline {
   agent any
   options {
@@ -58,7 +67,7 @@ pipeline {
       }
     }
 
-    stage('Health Check') {
+    stage('Service validation') {
       steps {
         bat 'docker compose exec -T app curl -f http://localhost:3000 || exit 1'
       }
