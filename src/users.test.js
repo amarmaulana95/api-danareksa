@@ -9,5 +9,8 @@ describe('GET /users', () => {
 });
 
 afterAll(async () => {
-  await pool.end();  // ✅ pastikan pool ditutup
+    await pool.end();
+    jest.clearAllTimers();  // bersihin timer
+    jest.resetAllMocks();   // bersihin mock
 });
+  
