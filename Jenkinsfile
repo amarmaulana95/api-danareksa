@@ -48,12 +48,18 @@ pipeline {
       }
     }
 
-    stage('Deploy Dev') {
-      when { branch 'main' }
-      steps {
-        bat 'docker-compose up -d --build'
-      }
+   stage('Deploy') {
+    when { 
+        anyOf {
+        expression { env.BRANCH_NAME == 'main' }
+        expression { env.GIT_BRANCH == 'origin/main' }
+        }
     }
+    steps {
+        bat 'docker-compose up -d --build'
+    }
+    }
+
 
    stage('Health Check') {
     steps {
