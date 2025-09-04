@@ -17,27 +17,15 @@ pipeline {
     }
 
     stage('Build') {
-      steps {
-        script {
-          if (isUnix()) {
-            sh 'docker build -t api-danareksa .'
-          } else {
-            bat 'docker build -t api-danareksa .'
-          }
+        steps {
+            powershell 'docker build -t api-danareksa .'
         }
-      }
     }
-
+    
     stage('Up') {
-      steps {
-        script {
-          if (isUnix()) {
-            sh 'docker-compose up -d --build'
-          } else {
-            bat 'docker-compose up -d --build'
-          }
+        steps {
+            powershell 'docker-compose up -d --build'
         }
-      }
     }
   }
 }
