@@ -42,6 +42,64 @@ pipeline {
       }
     }
 
+    // ---------- DevSecOps (dummy/soft-fail, selalu hijau) ----------
+    stage('SonarQube Scan') {
+      steps {
+        echo 'SonarQube Scan (dummy)'
+        bat 'echo Dummy > sonar-dummy-report.txt'
+      }
+    }
+
+    stage('OWASP Dependency-Check') {
+      steps {
+        echo 'OWASP Dependency-Check (dummy)'
+        bat 'echo No vuln > depcheck-dummy.txt'
+      }
+    }
+
+    stage('Trivy Container Scan') {
+      steps {
+        echo 'Trivy Container Scan (dummy)'
+        bat 'echo No CVE > trivy-dummy.txt'
+      }
+    }
+
+    stage('TruffleHog Secret Scan') {
+      steps {
+        echo 'TruffleHog Secret Scan (dummy)'
+        bat 'echo No secret > truffle-dummy.txt'
+      }
+    }
+
+    stage('Semgrep SAST') {
+      steps {
+        echo 'Semgrep SAST (dummy)'
+        bat 'echo No issue > semgrep-dummy.txt'
+      }
+    }
+
+    stage('tfsec IaC Scan') {
+      steps {
+        echo 'tfsec IaC Scan (dummy)'
+        bat 'echo No misconfig > tfsec-dummy.txt'
+      }
+    }
+
+    stage('ZAP DAST') {
+      steps {
+        echo 'ZAP DAST (dummy)'
+        bat 'echo No vuln > zap-dummy.txt'
+      }
+    }
+
+    stage('KubeBench Compliance') {
+      steps {
+        echo 'KubeBench Compliance (dummy)'
+        bat 'echo CIS pass > kubebench-dummy.txt'
+      }
+    }
+    // ---------- End of dummy scans ----------
+
     stage('Docker Tag Version') {
       steps {
         script {
@@ -51,6 +109,13 @@ pipeline {
           bat "docker tag ${IMAGE}:latest ${IMAGE}:prod-${VERSION}"
           echo "Tagged: ${IMAGE}:${VERSION} & prod-${VERSION}"
         }
+      }
+    }
+
+    stage('Nexus Publish') {
+      steps {
+        echo 'Nexus Publish (dummy)'
+        bat 'echo Nexus publish done > nexus-dummy.txt'
       }
     }
 
