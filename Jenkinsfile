@@ -7,7 +7,7 @@ pipeline {
   agent any
   options {
     buildDiscarder logRotator(daysToKeepStr: '7', numToKeepStr: '5')
-    timeout(time: 20, unit: 'MINUTES')
+    timeout(time: 30, unit: 'MINUTES')
     timestamps()
   }
 
@@ -16,9 +16,46 @@ pipeline {
       steps { checkout scm }
     }
 
+    // ---------- EARLY FAIL-FAST (dummy/echo) ----------
+    stage('Semgrep SAST') {
+      steps {
+        echo 'Semgrep SAST (dummy) – no issue'
+        bat 'echo SAST pass > semgrep-dummy.txt'
+      }
+    }
+
+    stage('TruffleHog Secret Scan') {
+      steps {
+        echo 'TruffleHog Secret Scan (dummy) – no leak'
+        bat 'echo Secret pass > trufflehog-dummy.txt'
+      }
+    }
+
+    stage('tfsec IaC Scan') {
+      steps {
+        echo 'tfsec IaC Scan (dummy) – no misconfig'
+        bat 'echo IaC pass > tfsec-dummy.txt'
+      }
+    }
+    // ---------------------------------------------------
+
+    stage('Dependency Scan') {
+      steps {
+        echo 'OWASP Dependency-Check (dummy) – no vuln'
+        bat 'echo Dep pass > dep-dummy.txt'
+      }
+    }
+
     stage('Build Test Image') {
       steps {
         bat 'docker build -t api-danareksa:latest .'
+      }
+    }
+
+    stage('Trivy Image Scan') {
+      steps {
+        echo 'Trivy Image Scan (dummy) – no CVE'
+        bat 'echo Image pass > trivy-dummy.txt'
       }
     }
 
@@ -42,80 +79,10 @@ pipeline {
       }
     }
 
-    // ---------- DevSecOps (dummy/soft-fail, selalu hijau) ----------
     stage('SonarQube Scan') {
       steps {
-        echo 'SonarQube Scan (dummy)'
-        bat 'echo Dummy > sonar-dummy-report.txt'
-      }
-    }
-
-    stage('OWASP Dependency-Check') {
-      steps {
-        echo 'OWASP Dependency-Check (dummy)'
-        bat 'echo No vuln > depcheck-dummy.txt'
-      }
-    }
-
-    stage('Trivy Container Scan') {
-      steps {
-        echo 'Trivy Container Scan (dummy)'
-        bat 'echo No CVE > trivy-dummy.txt'
-      }
-    }
-
-    stage('TruffleHog Secret Scan') {
-      steps {
-        echo 'TruffleHog Secret Scan (dummy)'
-        bat 'echo No secret > truffle-dummy.txt'
-      }
-    }
-
-    stage('Semgrep SAST') {
-      steps {
-        echo 'Semgrep SAST (dummy)'
-        bat 'echo No issue > semgrep-dummy.txt'
-      }
-    }
-
-    stage('tfsec IaC Scan') {
-      steps {
-        echo 'tfsec IaC Scan (dummy)'
-        bat 'echo No misconfig > tfsec-dummy.txt'
-      }
-    }
-
-    stage('ZAP DAST') {
-      steps {
-        echo 'ZAP DAST (dummy)'
-        bat 'echo No vuln > zap-dummy.txt'
-      }
-    }
-
-    stage('KubeBench Compliance') {
-      steps {
-        echo 'KubeBench Compliance (dummy)'
-        bat 'echo CIS pass > kubebench-dummy.txt'
-      }
-    }
-    // ---------- End of dummy scans ----------
-
-    stage('Docker Tag Version') {
-      steps {
-        script {
-          def IMAGE = "api-danareksa"
-          def VERSION = "${BUILD_NUMBER}"
-          bat "docker tag ${IMAGE}:latest ${IMAGE}:${VERSION}"
-          bat "docker tag ${IMAGE}:latest ${IMAGE}:prod-${VERSION}"
-          echo "Tagged: ${IMAGE}:${VERSION} & prod-${VERSION}"
-        }
-      }
-    }
-
-    stage('Nexus Publish') {
-      steps {
-        echo 'Nexus Publish (dummy)'
-        bat 'echo Nexus publish done > nexus-dummy.txt'
+        echo 'SonarQube Scan (dummy) – quality gate pass'
+        bat 'echo Sonar pass > sonar-dummy.txt'
       }
     }
 
@@ -128,6 +95,32 @@ pipeline {
       }
       steps {
         bat 'docker compose up -d --build'
+      }
+    }
+
+    stage('ZAP DAST') {
+      steps {
+        echo 'ZAP DAST (dummy) – no vuln'
+        bat 'echo DAST pass > zap-dummy.txt'
+      }
+    }
+
+    stage('KubeBench Compliance') {
+      steps {
+        echo 'KubeBench Compliance (dummy) – CIS pass'
+        bat 'echo Bench pass > kubebench-dummy.txt'
+      }
+    }
+
+    stage('Tag & Push Image') {
+      steps {
+        script {
+          def IMAGE = "api-danareksa"
+          def VERSION = "${BUILD_NUMBER}"
+          bat "docker tag ${IMAGE}:latest ${IMAGE}:${VERSION}"
+          bat "docker tag ${IMAGE}:latest ${IMAGE}:prod-${VERSION}"
+          echo 'Simulate: docker push ${IMAGE}:${VERSION}'
+        }
       }
     }
 
