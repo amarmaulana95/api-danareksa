@@ -20,7 +20,7 @@ pipeline {
     stage('Semgrep SAST') {
       steps {
         echo 'Semgrep SAST (dummy) – scanning...'
-        bat 'timeout /t 5 >nul'
+        bat 'ping -n 6 127.0.0.1 >nul'  // 5 detik
         bat 'echo SAST pass > semgrep-dummy.txt'
       }
     }
@@ -28,7 +28,7 @@ pipeline {
     stage('TruffleHog Secret Scan') {
       steps {
         echo 'TruffleHog Secret Scan (dummy) – scanning...'
-        bat 'timeout /t 4 >nul'
+        bat 'ping -n 5 127.0.0.1 >nul'  // 4 detik
         bat 'echo Secret pass > trufflehog-dummy.txt'
       }
     }
@@ -37,7 +37,7 @@ pipeline {
     stage('Dependency Scan') {
       steps {
         echo 'OWASP Dependency-Check (dummy) – analyzing...'
-        bat 'timeout /t 6 >nul'
+        bat 'ping -n 7 127.0.0.1 >nul'  // 6 detik
         bat 'echo Dep pass > dep-dummy.txt'
       }
     }
@@ -51,7 +51,7 @@ pipeline {
     stage('Trivy Image Scan') {
       steps {
         echo 'Trivy Image Scan (dummy) – scanning image...'
-        bat 'timeout /t 7 >nul'
+        bat 'ping -n 8 127.0.0.1 >nul'  // 7 detik
         bat 'echo Image pass > trivy-dummy.txt'
       }
     }
@@ -79,7 +79,7 @@ pipeline {
     stage('SonarQube Scan') {
       steps {
         echo 'SonarQube Scan (dummy) – analyzing code quality...'
-        bat 'timeout /t 8 >nul'
+        bat 'ping -n 9 127.0.0.1 >nul'  // 8 detik
         bat 'echo Sonar pass > sonar-dummy.txt'
       }
     }
@@ -99,7 +99,7 @@ pipeline {
     stage('Nexus Publish') {
       steps {
         echo 'Nexus Publish (dummy) – pushing artifact...'
-        bat 'timeout /t 5 >nul'
+        bat 'ping -n 6 127.0.0.1 >nul'  // 5 detik
         bat 'echo Nexus publish done > nexus-dummy.txt'
       }
     }
@@ -119,7 +119,7 @@ pipeline {
     stage('ZAP DAST') {
       steps {
         echo 'ZAP DAST (dummy) – attacking endpoints...'
-        bat 'timeout /t 9 >nul'
+        bat 'ping -n 10 127.0.0.1 >nul'  // 9 detik
         bat 'echo DAST pass > zap-dummy.txt'
       }
     }
