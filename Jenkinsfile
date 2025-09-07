@@ -16,7 +16,7 @@ pipeline {
       steps { checkout scm }
     }
 
-    // ---------- EARLY FAIL-FAST (dummy/echo) ----------
+    // ---------- EARLY FAIL-FAST ----------
     stage('Semgrep SAST') {
       steps {
         echo 'Semgrep SAST (dummy) – no issue'
@@ -30,14 +30,7 @@ pipeline {
         bat 'echo Secret pass > trufflehog-dummy.txt'
       }
     }
-
-    stage('tfsec IaC Scan') {
-      steps {
-        echo 'tfsec IaC Scan (dummy) – no misconfig'
-        bat 'echo IaC pass > tfsec-dummy.txt'
-      }
-    }
-    // ---------------------------------------------------
+    // -------------------------------------
 
     stage('Dependency Scan') {
       steps {
@@ -86,6 +79,25 @@ pipeline {
       }
     }
 
+    stage('Tag & Push Image') {
+      steps {
+        script {
+          def IMAGE = "api-danareksa"
+          def VERSION = "${BUILD_NUMBER}"
+          bat "docker tag ${IMAGE}:latest ${IMAGE}:${VERSION}"
+          bat "docker tag ${IMAGE}:latest ${IMAGE}:prod-${VERSION}"
+          echo "Tagged: ${IMAGE}:${VERSION} & prod-${VERSION}"
+        }
+      }
+    }
+
+    stage('Nexus Publish') {
+      steps {
+        echo 'Nexus Publish (dummy)'
+        bat 'echo Nexus publish done > nexus-dummy.txt'
+      }
+    }
+
     stage('Deploy to Staging') {
       when {
         anyOf {
@@ -102,25 +114,6 @@ pipeline {
       steps {
         echo 'ZAP DAST (dummy) – no vuln'
         bat 'echo DAST pass > zap-dummy.txt'
-      }
-    }
-
-    stage('KubeBench Compliance') {
-      steps {
-        echo 'KubeBench Compliance (dummy) – CIS pass'
-        bat 'echo Bench pass > kubebench-dummy.txt'
-      }
-    }
-
-    stage('Tag & Push Image') {
-      steps {
-        script {
-          def IMAGE = "api-danareksa"
-          def VERSION = "${BUILD_NUMBER}"
-          bat "docker tag ${IMAGE}:latest ${IMAGE}:${VERSION}"
-          bat "docker tag ${IMAGE}:latest ${IMAGE}:prod-${VERSION}"
-          echo 'Simulate: docker push ${IMAGE}:${VERSION}'
-        }
       }
     }
 
