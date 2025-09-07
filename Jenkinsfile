@@ -19,14 +19,16 @@ pipeline {
     // ---------- EARLY FAIL-FAST ----------
     stage('Semgrep SAST') {
       steps {
-        echo 'Semgrep SAST (dummy) – no issue'
+        echo 'Semgrep SAST (dummy) – scanning...'
+        bat 'timeout /t 5 >nul'
         bat 'echo SAST pass > semgrep-dummy.txt'
       }
     }
 
     stage('TruffleHog Secret Scan') {
       steps {
-        echo 'TruffleHog Secret Scan (dummy) – no leak'
+        echo 'TruffleHog Secret Scan (dummy) – scanning...'
+        bat 'timeout /t 4 >nul'
         bat 'echo Secret pass > trufflehog-dummy.txt'
       }
     }
@@ -34,7 +36,8 @@ pipeline {
 
     stage('Dependency Scan') {
       steps {
-        echo 'OWASP Dependency-Check (dummy) – no vuln'
+        echo 'OWASP Dependency-Check (dummy) – analyzing...'
+        bat 'timeout /t 6 >nul'
         bat 'echo Dep pass > dep-dummy.txt'
       }
     }
@@ -47,7 +50,8 @@ pipeline {
 
     stage('Trivy Image Scan') {
       steps {
-        echo 'Trivy Image Scan (dummy) – no CVE'
+        echo 'Trivy Image Scan (dummy) – scanning image...'
+        bat 'timeout /t 7 >nul'
         bat 'echo Image pass > trivy-dummy.txt'
       }
     }
@@ -74,7 +78,8 @@ pipeline {
 
     stage('SonarQube Scan') {
       steps {
-        echo 'SonarQube Scan (dummy) – quality gate pass'
+        echo 'SonarQube Scan (dummy) – analyzing code quality...'
+        bat 'timeout /t 8 >nul'
         bat 'echo Sonar pass > sonar-dummy.txt'
       }
     }
@@ -93,7 +98,8 @@ pipeline {
 
     stage('Nexus Publish') {
       steps {
-        echo 'Nexus Publish (dummy)'
+        echo 'Nexus Publish (dummy) – pushing artifact...'
+        bat 'timeout /t 5 >nul'
         bat 'echo Nexus publish done > nexus-dummy.txt'
       }
     }
@@ -112,7 +118,8 @@ pipeline {
 
     stage('ZAP DAST') {
       steps {
-        echo 'ZAP DAST (dummy) – no vuln'
+        echo 'ZAP DAST (dummy) – attacking endpoints...'
+        bat 'timeout /t 9 >nul'
         bat 'echo DAST pass > zap-dummy.txt'
       }
     }
