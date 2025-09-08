@@ -24,8 +24,14 @@
   },
   "jest": {
     "testEnvironment": "node",
+    "collectCoverage": true,
     "coverageDirectory": "coverage",
-    "collectCoverageFrom": ["src/**/*.js"],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/**/*.test.js",
+      "!src/**/*.spec.js"
+    ],
+    "coverageReporters": ["lcov", "text", "html"],
     "testResultsProcessor": "jest-junit",
     "setupFiles": ["dotenv/config"],
     "coverageThreshold": {
@@ -36,7 +42,7 @@
         "statements": 0
       }
     }
-  },
+  },  
   "jest-junit": {
     "outputDirectory": "test-reports",
     "outputName": "junit.xml"
