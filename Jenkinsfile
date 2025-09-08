@@ -79,8 +79,8 @@ pipeline {
     stage('SonarCloud Scan') {
       steps {
         withSonarQubeEnv('sonarcloud') {
-          bat '''
-            sonar-scanner ^
+          bat """
+            ${tool 'SonarScanner'} ^
             -Dsonar.projectKey=amarmaulana95_api-danareksa ^
             -Dsonar.organization=amarmaulana95 ^
             -Dsonar.host.url=https://sonarcloud.io ^
@@ -89,7 +89,7 @@ pipeline {
             -Dsonar.test.inclusions=**/*.test.js,**/*.spec.js ^
             -Dsonar.exclusions=node_modules/**,coverage/**,*.txt,*.log ^
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-          '''
+          """
         }
       }
     }
