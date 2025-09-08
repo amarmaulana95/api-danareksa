@@ -76,11 +76,21 @@ pipeline {
       }
     }
 
-    stage('SonarQube Scan') {
+    stage('SonarCloud Scan') {
       steps {
-        echo 'SonarQube Scan (dummy) – analyzing code quality...'
-        bat 'ping -n 9 127.0.0.1 >nul'  // 8 detik
-        bat 'echo Sonar pass > sonar-dummy.txt'
+        withSonarQubeEnv('sonarcloud') {
+          bat '''
+            %SONAR_SCANNER_HOME%\\bin\\sonar-scanner ^
+            -Dsonar.projectKey=amarmaulana95_api-danareksa ^
+            -Dsonar.organization=amarmaulana95 ^
+            -Dsonar.host.url=https://sonarcloud.io ^
+            -Dsonar.sources=src ^
+            -Dsonar.tests=. ^
+            -Dsonar.test.inclusions=**/*.test.js,**/*.spec.js ^
+            -Dsonar.exclusions=node_modules/**,coverage/**,*.txt,*.log ^
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+          '''
+        }
       }
     }
 
