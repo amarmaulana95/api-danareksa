@@ -80,7 +80,7 @@ pipeline {
       steps {
         withSonarQubeEnv('sonarcloud') {
           bat '''
-            %SONAR_SCANNER_HOME%\\bin\\sonar-scanner ^
+            sonar-scanner ^
             -Dsonar.projectKey=amarmaulana95_api-danareksa ^
             -Dsonar.organization=amarmaulana95 ^
             -Dsonar.host.url=https://sonarcloud.io ^
