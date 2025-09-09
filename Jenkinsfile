@@ -67,7 +67,7 @@ pipeline {
     stage('Unit Test') {
       steps {
         bat 'if exist coverage rmdir /s /q coverage'
-        bat 'docker compose exec -T app npm test -- --ci --forceExit --reporters=default --reporters=jest-junit'
+        bat 'docker compose exec -T app npm test -- --coverage --ci --forceExit --reporters=default --reporters=jest-junit'
       }
       post {
         always {
@@ -80,9 +80,12 @@ pipeline {
     stage('Copy Coverage Out') {
       steps {
         bat 'docker compose cp app:/app/coverage/lcov.info coverage/lcov.info || exit 0'
-        bat 'dir coverage'          // debug supaya kelihatan di log
+        bat 'docker compose cp app:/app/test-reports/junit.xml test-reports/junit.xml || exit 0'
+        bat 'dir coverage'      // debug
+        bat 'dir test-reports'  // debug
       }
     }
+
 
     stage('SonarCloud Scan') {
       steps {
