@@ -42,11 +42,11 @@ pipeline {
       }
     }
 
-    stage('Build Test Image') {
-      steps {
-        bat 'docker build -t api-danareksa:latest .'
+     stage('Build Image') {
+        steps {
+          bat 'docker build -t api-danareksa:%BUILD_NUMBER% .'
+        }
       }
-    }
 
     stage('Trivy Image Scan') {
       steps {
