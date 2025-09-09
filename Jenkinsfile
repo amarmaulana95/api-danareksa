@@ -66,9 +66,20 @@ pipeline {
 
     stage('Unit Test') {
       steps {
-        bat 'docker compose exec -T app npm test -- --coverage --ci --forceExit --reporters=default --reporters=jest-junit'
-        bat 'docker compose cp app:/app/coverage/lcov.info coverage/lcov.info'
-        bat 'docker compose cp app:/app/test-reports/junit.xml test-reports/junit.xml'
+        bat '''
+          :: 1. pastikan folder host ada
+          if not exist coverage   mkdir coverage
+          if not exist test-reports mkdir test-reports
+
+          :: 2. jalankan test di container
+          docker compose exec -T app npm test -- \
+              --coverage --ci --forceExit \
+              --reporters=default --reporters=jest-junit
+
+          :: 3. salin hasil keluar
+          docker compose cp app:/app/coverage/lcov.info coverage/lcov.info
+          docker compose cp app:/app/test-reports/junit.xml test-reports/junit.xml
+        '''
       }
       post {
         always {
