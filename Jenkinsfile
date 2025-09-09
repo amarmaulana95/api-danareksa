@@ -1,4 +1,7 @@
 properties([
+  parameters([
+    string(name: 'TAG_NAME', defaultValue: '', description: 'Git tag to deploy (v*)')
+  ]),
   pipelineTriggers([githubPush()]),
   buildDiscarder(logRotator(daysToKeepStr: '7', numToKeepStr: '5'))
 ])
