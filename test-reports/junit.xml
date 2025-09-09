@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="1" failures="1" errors="0" time="3.213">
-  <testsuite name="GET /users" errors="0" failures="1" skipped="0" timestamp="2025-09-08T07:08:12" time="2.517" tests="1">
-    <testcase classname="GET /users should return array of users" name="GET /users should return array of users" time="0.094">
+<testsuites name="jest tests" tests="1" failures="1" errors="0" time="2.106">
+  <testsuite name="GET /users" errors="0" failures="1" skipped="0" timestamp="2025-09-09T03:58:54" time="0.859" tests="1">
+    <testcase classname="GET /users should return array of users" name="GET /users should return array of users" time="0.184">
       <failure>error: role &quot;Nindya Karya&quot; does not exist
     at D:\CICD\api-danareksa\node_modules\pg-pool\index.js:45:11
     at processTicksAndRejections (node:internal/process/task_queues:105:5)

@@ -76,6 +76,14 @@ pipeline {
       }
     }
 
+    // === BARU: copy coverage keluar container ===
+    stage('Copy Coverage Out') {
+      steps {
+        bat 'docker compose cp app:/app/coverage/lcov.info coverage/lcov.info || exit 0'
+        bat 'dir coverage'          // debug supaya kelihatan di log
+      }
+    }
+
     stage('SonarCloud Scan') {
       steps {
         withSonarQubeEnv('sonarcloud') {
@@ -83,7 +91,7 @@ pipeline {
             "${tool 'SonarScanner'}\\bin\\sonar-scanner.bat" ^
             -Dsonar.projectKey=amarmaulana95_api-danareksa ^
             -Dsonar.organization=amarmaulana95 ^
-            -Dsonar.host.url=https://sonarcloud.io ^
+            -Dsonar.host.url=https://sonarcloud.io  ^
             -Dsonar.sources=src ^
             -Dsonar.tests=. ^
             -Dsonar.test.inclusions=**/*.test.js,**/*.spec.js ^
