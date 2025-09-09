@@ -64,12 +64,9 @@ pipeline {
       }
     }
 
-   stage('Unit Test') {
+    stage('Unit Test') {
       steps {
-        // 1. jalankan test di container → hasil tetap di container
         bat 'docker compose exec -T app npm test -- --coverage --ci --forceExit --reporters=default --reporters=jest-junit'
-        
-        // 2. copy 2 file penting ke host (tanpa mount, tanpa atur hak)
         bat 'docker compose cp app:/app/coverage/lcov.info coverage/lcov.info'
         bat 'docker compose cp app:/app/test-reports/junit.xml test-reports/junit.xml'
       }
