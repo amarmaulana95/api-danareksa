@@ -156,22 +156,24 @@ pipeline {
     }
 
     stage('Deploy to Production') {
-      when {
-        expression { params.TAG_NAME?.startsWith('v') }
-      }
-      steps {
-        input message: "Deploy ${params.TAG_NAME} ke PROD lokal?", ok: 'Deploy'
-        script {
-          bat """
-            set BUILD_NUMBER=${params.TAG_NAME}
-            set DB_USER=postgres
-            set DB_PASS=postgres
-            docker compose -f docker-compose.prod.yml up -d --no-deps api-prod
-          """
+        when {
+          expression { params.TAG_NAME?.startsWith('v') }
+        }
+        steps {
+          input message: "Deploy ${params.TAG_NAME} ke PROD lokal?", ok: 'Deploy'
+          script {
+            bat """
+              :: build image dengan tag versi
+              docker build -t api-danareksa:${params.TAG_NAME} .
+              set BUILD_NUMBER=${params.TAG_NAME}
+              set DB_USER=postgres
+              set DB_PASS=postgres
+              docker compose -f docker-compose.prod.yml up -d --no-deps api-prod
+            """
+          }
         }
       }
     }
-  }
 
   
   post {
