@@ -171,7 +171,9 @@ pipeline {
         }
       }
     }
+  }
 
+  
   post {
     always  { bat 'echo Pipeline selesai.' }
     success { bat 'echo Build sukses - semua stage hijau.' }
