@@ -64,10 +64,14 @@ pipeline {
       }
     }
 
-    stage('Unit Test') {
+   stage('Unit Test') {
       steps {
         bat 'if exist coverage rmdir /s /q coverage'
-        bat 'mkdir coverage'                 // <-- tambahan baru
+        bat 'if exist test-reports rmdir /s /q test-reports'
+        bat 'mkdir coverage'
+        bat 'mkdir test-reports'                    // <-- baru
+        bat 'icacls test-reports /grant Everyone:F /T'  // <-- izin write
+        bat 'icacls coverage /grant Everyone:F /T'      // <-- izin write
         bat 'docker compose exec -T app npm test -- --coverage --ci --forceExit --reporters=default --reporters=jest-junit'
       }
       post {
