@@ -66,13 +66,12 @@ pipeline {
 
    stage('Unit Test') {
       steps {
-        bat 'if exist coverage rmdir /s /q coverage'
-        bat 'if exist test-reports rmdir /s /q test-reports'
-        bat 'mkdir coverage'
-        bat 'mkdir test-reports'                    // <-- baru
-        bat 'icacls test-reports /grant Everyone:F /T'  // <-- izin write
-        bat 'icacls coverage /grant Everyone:F /T'      // <-- izin write
+        // 1. jalankan test di container → hasil tetap di container
         bat 'docker compose exec -T app npm test -- --coverage --ci --forceExit --reporters=default --reporters=jest-junit'
+        
+        // 2. copy 2 file penting ke host (tanpa mount, tanpa atur hak)
+        bat 'docker compose cp app:/app/coverage/lcov.info coverage/lcov.info'
+        bat 'docker compose cp app:/app/test-reports/junit.xml test-reports/junit.xml'
       }
       post {
         always {
