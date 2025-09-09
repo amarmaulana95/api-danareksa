@@ -67,6 +67,7 @@ pipeline {
     stage('Unit Test') {
       steps {
         bat 'if exist coverage rmdir /s /q coverage'
+        bat 'mkdir coverage'                 // <-- tambahan baru
         bat 'docker compose exec -T app npm test -- --coverage --ci --forceExit --reporters=default --reporters=jest-junit'
       }
       post {

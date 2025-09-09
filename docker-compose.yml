@@ -21,8 +21,8 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./src/seeders/seed.sql:/docker-entrypoint-initdb.d/seed.sql
-      - ./test-reports:/usr/src/app/test-reports
-      - ./coverage:/usr/src/app/coverage
+      - ./coverage:/app/coverage
+      - ./test-reports:/app/test-reports
 
 volumes:
   db_data:
