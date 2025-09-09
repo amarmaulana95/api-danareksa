@@ -76,17 +76,6 @@ pipeline {
       }
     }
 
-    // === BARU: copy coverage keluar container ===
-    stage('Copy Coverage Out') {
-      steps {
-        bat 'docker compose cp app:/app/coverage/lcov.info coverage/lcov.info || exit 0'
-        bat 'docker compose cp app:/app/test-reports/junit.xml test-reports/junit.xml || exit 0'
-        bat 'dir coverage'      // debug
-        bat 'dir test-reports'  // debug
-      }
-    }
-
-
     stage('SonarCloud Scan') {
       steps {
         withSonarQubeEnv('sonarcloud') {
