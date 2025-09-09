@@ -14,6 +14,8 @@ app.get('/users', async (req, res) => {
   res.json(result.rows);
 });
 
+app.get('/health', (_, res) => res.status(200).json({ status: 'OK' }));
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
