@@ -151,6 +151,21 @@ pipeline {
         bat 'docker compose exec -T app curl -f http://localhost:3000 || exit 1'
       }
     }
+
+    stage('Deploy Production') {
+      when { tag 'v*' }         
+      steps {
+        input message: 'Deploy ke PROD lokal?', ok: 'Deploy'
+        script {
+          bat """
+            set BUILD_NUMBER=%BUILD_NUMBER%
+            set DB_USER=postgres
+            set DB_PASS=postgres
+            docker compose -f docker-compose.prod.yml up -d --no-deps api-prod
+          """
+        }
+      }
+    }
   }
 
   post {
