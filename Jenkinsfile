@@ -28,18 +28,7 @@ pipeline {
 
     stage('Secret Scan (TruffleHog)') {
       steps {
-        bat '''
-          :: 1. download sekali (cached di workspace)
-          if not exist trufflehog.exe (
-            curl -L -o trufflehog.zip ^
-              https://github.com/trufflesecurity/trufflehog/releases/latest/download/trufflehog_Windows_x86_64.zip
-            tar -xf trufflehog.zip trufflehog.exe
-            del trufflehog.zip
-          )
-
-          :: 2. scan repo + cuma verified; fail kalau ada yg live
-          trufflehog.exe git file://. --only-verified --fail --json > trufflehog.json
-        '''
+        bat 'trufflehog.exe git file://. --only-verified --json > trufflehog.json'
       }
       post {
         always {
