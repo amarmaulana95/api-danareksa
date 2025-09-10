@@ -21,7 +21,9 @@ pipeline {
 
     /* ---------- FAIL-FAST SECURITY ---------- */
     stage('SAST (Semgrep)') {
-      steps { bat 'semgrep --config=auto --error src/' }
+      steps {
+        bat 'docker run --rm -v "%WORKSPACE%":/src -w /src returntocorp/semgrep:1.45.0 semgrep --config=auto --error src/'
+      }
     }
 
     stage('Secret Scan (TruffleHog)') {
