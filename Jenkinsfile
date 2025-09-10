@@ -28,7 +28,7 @@ pipeline {
 
     stage('Secret Scan (TruffleHog)') {
       steps {
-        bat 'trufflehog.exe git file://. --only-verified --json > trufflehog.json'
+        bat '"C:\\tools\\trufflehog.exe" git file://. --only-verified --json > trufflehog.json'
       }
       post {
         always {
