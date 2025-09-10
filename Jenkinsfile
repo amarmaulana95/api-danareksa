@@ -21,10 +21,7 @@ pipeline {
 
     /* ---------- FAIL-FAST SECURITY ---------- */
     stage('SAST (Semgrep)') {
-      steps {
-        bat 'npm install -g @semgrep/cli'
-        bat 'semgrep --config=auto --error src/'
-      }
+      steps { bat 'semgrep --config=auto --error src/' }
     }
 
     stage('Secret Scan (TruffleHog)') {
