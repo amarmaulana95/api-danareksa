@@ -92,9 +92,7 @@ pipeline {
     /* ---------- IMAGE HARDENING ---------- */
     stage('Trivy Image Scan') {
       steps {
-        echo 'Trivy (dummy) – scanning image...'
-        bat 'ping -n 8 127.0.0.1 >nul'
-        bat 'echo Image pass > trivy-dummy.txt'
+        bat 'docker run --rm -v "%WORKSPACE%":/tmp aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL api-danareksa:latest'
       }
     }
 
