@@ -43,9 +43,16 @@ pipeline {
     }
 
     /* ---------- BUILD & UNIT TEST ---------- */
-    stage('Build Test Image') {
+   stage('Build Test Image') {
       steps {
-        bat 'docker build -t api-danareksa:latest .'
+        bat '''
+          set DOCKER_BUILDKIT=1
+          docker build ^
+            --build-arg BUILDKIT_INLINE_CACHE=1 ^
+            --cache-from api-danareksa:cache ^
+            -t api-danareksa:cache ^
+            -t api-danareksa:latest .
+        '''
       }
     }
 
