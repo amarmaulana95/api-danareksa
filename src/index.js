@@ -1,10 +1,16 @@
-const express = require('express');
-const pool = require('./db');
+const express      = require('express');
+const cookieParser = require('cookie-parser');
+const csurf        = require('csurf');
+const pool         = require('./db');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cookieParser());          
+app.use(csurf({ cookie: true })); 
 
+/* API endpoint */
 app.get('/', (req, res) => {
   res.send('Hello from API Danareksa -');
 });
