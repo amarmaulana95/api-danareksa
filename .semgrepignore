@@ -1,0 +1,11 @@
+node_modules/
+coverage/
+test-reports/
+*.test.js
+*.spec.js
+.env.*
+docker-compose*.yml
+Dockerfile*
+Jenkinsfile
+*.md
+*.log

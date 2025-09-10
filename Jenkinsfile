@@ -21,10 +21,15 @@ pipeline {
 
     /* ---------- FAIL-FAST SECURITY ---------- */
     stage('SAST (Semgrep)') {
+      agent {
+        docker {
+          label 'docker'                       // pakai node yg ada Docker
+          image 'returntocorp/semgrep:1.45.0'  // pin versi
+          args '-v "${WORKSPACE}":/src -w /src'
+        }
+      }
       steps {
-        echo 'SAST (dummy) – scanning...'
-        bat 'ping -n 6 127.0.0.1 >nul'
-        bat 'echo SAST pass > semgrep-dummy.txt'
+        sh 'semgrep --config=auto --error src/'
       }
     }
 
