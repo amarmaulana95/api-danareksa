@@ -21,15 +21,9 @@ pipeline {
 
     /* ---------- FAIL-FAST SECURITY ---------- */
     stage('SAST (Semgrep)') {
-      agent {
-        docker {
-          label 'docker'                       // pakai node yg ada Docker
-          image 'returntocorp/semgrep:1.45.0'  // pin versi
-          args '-v "${WORKSPACE}":/src -w /src'
-        }
-      }
       steps {
-        sh 'semgrep --config=auto --error src/'
+        bat 'npm install -g @semgrep/cli'
+        bat 'semgrep --config=auto --error src/'
       }
     }
 
