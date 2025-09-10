@@ -33,7 +33,7 @@ pipeline {
       post {
         always {
           archiveArtifacts artifacts: 'trufflehog.json', allowEmptyArchive: true
-          recordIssues tool: truffleHog(pattern: 'trufflehog.json')
+          // recordIssues tool: truffleHog(pattern: 'trufflehog.json')
         }
       }
     }
