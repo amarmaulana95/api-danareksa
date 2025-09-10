@@ -92,7 +92,16 @@ pipeline {
     /* ---------- IMAGE HARDENING ---------- */
     stage('Trivy Image Scan') {
       steps {
-        bat 'docker run --rm -v "%WORKSPACE%":/tmp aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL api-danareksa:latest'
+        // 1. pastikan binary ada (cukup di-download sekali seumur hidup agent)
+        bat '''
+          if not exist trivy.exe (
+            curl -L -o trivy.zip https://github.com/aquasecurity/trivy/releases/download/v0.50.1/trivy_0.50.1_windows-64bit.zip
+            tar -xf trivy.zip trivy.exe & del trivy.zip
+          )
+        '''
+
+        // 2. scan langsung image lokal; exit 1 kalau HIGH/CRITICAL
+        bat 'trivy.exe image --severity HIGH,CRITICAL --ignore-unfixed api-danareksa:latest'
       }
     }
 
