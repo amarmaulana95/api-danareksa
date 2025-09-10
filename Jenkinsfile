@@ -28,9 +28,24 @@ pipeline {
 
     stage('Secret Scan (TruffleHog)') {
       steps {
-        echo 'Secret scan (dummy) – scanning...'
-        bat 'ping -n 5 127.0.0.1 >nul'
-        bat 'echo Secret pass > trufflehog-dummy.txt'
+        bat '''
+          :: 1. download sekali (cached di workspace)
+          if not exist trufflehog.exe (
+            curl -L -o trufflehog.zip ^
+              https://github.com/trufflesecurity/trufflehog/releases/latest/download/trufflehog_Windows_x86_64.zip
+            tar -xf trufflehog.zip trufflehog.exe
+            del trufflehog.zip
+          )
+
+          :: 2. scan repo + cuma verified; fail kalau ada yg live
+          trufflehog.exe git file://. --only-verified --fail --json > trufflehog.json
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'trufflehog.json', allowEmptyArchive: true
+          recordIssues tool: truffleHog(pattern: 'trufflehog.json')
+        }
       }
     }
 
