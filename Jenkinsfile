@@ -148,7 +148,7 @@ pipeline {
         expression { params.TAG_NAME?.startsWith('v') }
       }
       steps {
-        input message: "Deploy ${params.TAG_NAME} ke PROD lokal?", ok: 'Deploy'
+        input message: "Deploy ${params.TAG_NAME} ke PROD ?", ok: 'Deploy'
         script {
           bat """
             docker build -t api-danareksa:${params.TAG_NAME} .
