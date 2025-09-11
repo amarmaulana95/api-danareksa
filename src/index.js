@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cookieParser());          
-app.use(csurf({ cookie: true })); 
+app.use(csurf({ cookie: { secure: true, httpOnly: true } })); 
 
 /* API endpoint */
 app.get('/', (req, res) => {
