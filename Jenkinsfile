@@ -196,9 +196,17 @@ pipeline {
   }
 
   post {
-    always  { bat 'echo Pipeline selesai.' }
+    always {
+      bat '''
+        echo Pipeline selesai.
+        docker image prune -a -f
+        docker builder prune -a -f
+      '''
+    }
     success { bat 'echo Build sukses - semua stage hijau.' }
     failure { bat 'echo Build gagal - ada stage merah.' }
-    cleanup { bat 'docker image prune -f' }
+    cleanup {
+      bat 'rmdir /s /q coverage test-reports 2>nul || exit 0'
+    }
   }
 }
