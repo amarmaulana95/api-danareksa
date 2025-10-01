@@ -175,7 +175,7 @@ pipeline {
     }
 
     /* ---------- PRODUCTION (manual gate) ---------- */
-    stage('Deploy to Production') {
+    stage('Deploy Production') {
       when {
         expression { params.TAG_NAME?.startsWith('v') }
       }
