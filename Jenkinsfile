@@ -60,31 +60,15 @@ pipeline {
       }
     }
 
-    // stage('Unit Test + Coverage') {
-    //   steps {
-    //     bat '''
-    //       if not exist coverage   mkdir coverage
-    //       if not exist test-reports mkdir test-reports
-    //       docker compose exec -T app npm test -- --coverage --ci --forceExit \
-    //         --reporters=default --reporters=jest-junit
-    //       docker compose cp app:/app/coverage/lcov.info coverage/lcov.info
-    //       docker compose cp app:/app/test-reports/junit.xml test-reports/junit.xml
-    //     '''
-    //   }
-    //   post { always { junit 'test-reports/junit.xml' } }
-    // }
-
     stage('Unit Test + Coverage') {
       steps {
         bat '''
-          if not exist coverage mkdir coverage
+          if not exist coverage   mkdir coverage
           if not exist test-reports mkdir test-reports
-          docker compose -f docker-compose.yml up -d --build
-          docker compose -f docker-compose.yml exec -T app npm test -- --coverage --ci --forceExit --reporters=default --reporters=jest-junit
-          :: pastikan file sudah tertulis
-          docker compose -f docker-compose.yml exec -T app sh -c "test -f /app/coverage/lcov.info"
-          docker compose -f docker-compose.yml cp app:/app/coverage/lcov.info coverage/lcov.info
-          docker compose -f docker-compose.yml cp app:/app/test-reports/junit.xml test-reports/junit.xml
+          docker compose exec -T app npm test -- --coverage --ci --forceExit \
+            --reporters=default --reporters=jest-junit
+          docker compose cp app:/app/coverage/lcov.info coverage/lcov.info
+          docker compose cp app:/app/test-reports/junit.xml test-reports/junit.xml
         '''
       }
       post { always { junit 'test-reports/junit.xml' } }
